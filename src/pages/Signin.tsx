@@ -1,19 +1,25 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { authRepository } from '@/modules/auth/auth.repository';
+import { Link, Navigate } from 'react-router-dom';
+import { authRepository } from '../modules/auth/auth.repository';
+import { useCurrentUserStore } from '../modules/auth/current-user.state';
 
 function Signin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+  const currentUserStore = useCurrentUserStore();
   const handleSignin = async () => {
     try {
       const user = await authRepository.signin(email, password);
-      console.log(user);
+      currentUserStore.set(user);
     } catch (error) {
       console.error(error);
     }
   };
+
+
+  if (currentUserStore.currentUser !== null) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
