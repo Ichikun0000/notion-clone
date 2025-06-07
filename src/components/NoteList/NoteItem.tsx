@@ -4,7 +4,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
-import { ChevronRight, FileIcon, MoreHorizontal, Plus, Trash } from 'lucide-react';
+import { ChevronDown, ChevronRight, FileIcon, MoreHorizontal, Plus, Trash } from 'lucide-react';
 import { Item } from '../SideBar/Item';
 import { cn } from '@/lib/utils';
 import { Note } from '@/modules/notes/note.entity';
@@ -33,7 +33,15 @@ export function NoteItem({
 }: Props) {
   const [isHovered, setIsHovered] = useState(false);
   const getIcon = () => {
-    return isHovered ? ChevronRight : FileIcon;
+    if (expanded) {
+      return ChevronDown;
+    }
+    
+    if (isHovered) {
+      return ChevronRight;
+    }
+    
+    return FileIcon;
   };
   
   const menu = (
