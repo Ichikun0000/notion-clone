@@ -13,7 +13,7 @@ const Layout = () => {
 
   const fetchNotes = async () => {
     setIsLoading(true);
-    const notes = await noteRepository.find(currentUser!.id);
+    const notes = await noteRepository.find(currentUser!.id); // 親のノートのみ取得し、グローバルステートに保存
     if (notes == null) return;
     noteStore.set(notes);
     setIsLoading(false);
