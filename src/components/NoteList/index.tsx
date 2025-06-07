@@ -7,10 +7,10 @@ import { Note } from "@/modules/notes/note.entity";
 
 interface NoteListProps {
   layer?: number;
-  parentId?: number;
+  parentId?: number | null;
 }
 
-export function NoteList({ layer = 0, parentId }: NoteListProps) {
+export function NoteList({ layer = 0, parentId = null }: NoteListProps) {
   const noteStore = useNoteStore();
   const notes = noteStore.getAll();
   console.log(notes);
@@ -40,17 +40,22 @@ export function NoteList({ layer = 0, parentId }: NoteListProps) {
       >
         ページがありません
       </p>
-      {notes.map((note) => {
-        return (
-          <div key={note.id}>
-            <NoteItem
-              layer={layer}
-              note={note}
-              onExpand={(e: React.MouseEvent) => fetchChildren(e, note)}
-              onCreate={(e: React.MouseEvent) => createChildNote(e, note.id)}
-            />
-          </div>
-        );
+      {notes
+        .filter((note) => note.parent_document === parentId)
+        .map((note) => {
+          const hasChildren = notes.some(childNote => childNote.parent_document === note.id);
+          
+          return (
+            <div key={note.id}>
+              <NoteItem
+                layer={layer}
+                note={note}
+                onExpand={(e: React.MouseEvent) => fetchChildren(e, note)}
+                onCreate={(e: React.MouseEvent) => createChildNote(e, note.id)}
+              />
+              {hasChildren && <NoteList layer={layer + 1} parentId={note.id} />}
+            </div>
+          );
       })}
     </>
   );
