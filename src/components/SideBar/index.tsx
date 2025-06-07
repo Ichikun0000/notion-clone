@@ -14,12 +14,13 @@ type Props = {
 const SideBar: FC<Props> = ({ onSearchButtonClicked }) => {
   const { currentUser } = useCurrentUserStore();
 
+  const noteStore = useNoteStore();
   const handleCreateNote = async () => {
     const newNote = await noteRepository.create(currentUser!.id, {});
     noteStore.set([newNote]);
   };
 
-  const noteStore = useNoteStore();
+  console.log('render');
 
   return (
     <>
