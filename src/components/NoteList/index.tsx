@@ -29,8 +29,7 @@ export function NoteList({ layer = 0, parentId = null }: NoteListProps) {
 
   const fetchChildren = async (e: React.MouseEvent, note: Note) => {
     e.stopPropagation();
-    const children = await noteRepository.find(currentUser!.id, note.id);
-    if (children == null) return;
+    const children = await noteRepository.find(currentUser!.id, note.id); // TODO: エラーハンドリング
     noteStore.set(children);
     setExpanded((prev) => {
       const newExpanded = new Map(prev);

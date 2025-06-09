@@ -21,7 +21,7 @@ export const noteRepository = {
     if (error !== null) throw new Error(error?.message);
     return data;
   },
-  async find(userId: string, parentDocumentId?: number): Promise<Note[] | null> {
+  async find(userId: string, parentDocumentId?: number): Promise<Note[]> {
     const query = supabase
       .from("notes")
       .select("*")
@@ -36,6 +36,17 @@ export const noteRepository = {
     if (error !== null) throw new Error(error?.message);
     return data;
   },
+  async findOne(userId: string, noteId: number): Promise<Note> {
+    const { data, error } = await supabase
+      .from("notes")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("id", noteId)
+      .single();
+
+    if (error !== null) throw new Error(error?.message);
+    return data;
+  }
 };
 
 /*
