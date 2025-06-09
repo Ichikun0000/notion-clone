@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { Note, NoteInsert } from "./note.entity";
+import { Note, NoteInsert, NoteUpdate } from "./note.entity";
 
 export const noteRepository = {
   async create(
@@ -36,17 +36,29 @@ export const noteRepository = {
     if (error !== null) throw new Error(error?.message);
     return data;
   },
-  async findOne(userId: string, noteId: number): Promise<Note> {
+  async findOne(userId: string, id: number): Promise<Note> {
     const { data, error } = await supabase
       .from("notes")
       .select("*")
       .eq("user_id", userId)
-      .eq("id", noteId)
+      .eq("id", id)
       .single();
 
     if (error !== null) throw new Error(error?.message);
     return data;
-  }
+  },
+  async update(userId: string, id: number, noteUpdate: NoteUpdate): Promise<Note> {
+    const { data, error } = await supabase
+      .from("notes")
+      .update(noteUpdate)
+      .eq("user_id", userId)
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error !== null) throw new Error(error?.message);
+    return data;
+  },
 };
 
 /*
