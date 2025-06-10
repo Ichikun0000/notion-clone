@@ -5,14 +5,17 @@ import { useCurrentUserStore } from "./modules/auth/current-user.state";
 import { useEffect, useState } from "react";
 import { noteRepository } from "./modules/notes/note.repository";
 import { useNoteStore } from "./modules/notes/note.state";
+import { Note } from "./modules/notes/note.entity";
 
 const Layout = () => {
   const { currentUser } = useCurrentUserStore();
   const noteStore = useNoteStore();
   const [isLoading, setIsLoading] = useState(true);
   const [isShowModal, setIsShowModal] = useState(false);
+  const [searchResult, setSearchResult] = useState<Note[]>([]);
 
   const fetchNotes = async () => {
+    console.log("fetchNotes");
     setIsLoading(true);
     const notes = await noteRepository.find(currentUser!.id); // 親のノートのみ取得し、グローバルステートに保存
     if (notes == null) return;
@@ -23,6 +26,15 @@ const Layout = () => {
   useEffect(() => {
     fetchNotes();
   }, []);
+
+  const searchNotes = async (keyword: string) => {
+    console.log("searchKeyword", keyword);
+    const notes = await noteRepository.findByKeyword(currentUser!.id, keyword);
+    console.log("searchNotes", notes);
+    if (notes == null) return;
+    // noteStore.set(notes);
+    setSearchResult(notes);
+  };
 
   if (currentUser === null) {
     return <Navigate to="/signin" />;
@@ -37,9 +49,9 @@ const Layout = () => {
         <Outlet />
         <SearchModal
           isOpen={isShowModal}
-          notes={[]}
+          notes={searchResult}
           onItemSelect={() => {}}
-          onKeywordChanged={() => {}}
+          onKeywordChanged={searchNotes}
           onClose={() => setIsShowModal(false)}
         />
       </main>

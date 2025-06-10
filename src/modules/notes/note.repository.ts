@@ -36,6 +36,17 @@ export const noteRepository = {
     if (error !== null) throw new Error(error?.message);
     return data;
   },
+  async findByKeyword(userId: string, keyword: string): Promise<Note[]> {
+    const { data, error } = await supabase
+      .from("notes")
+      .select("*")
+      .eq("user_id", userId)
+      .or(`title.ilike.%${keyword}%,content.ilike.%${keyword}%`)
+      .order("created_at", { ascending: false });
+
+    if (error !== null) throw new Error(error?.message);
+    return data;
+  },
   async findOne(userId: string, id: number): Promise<Note> {
     const { data, error } = await supabase
       .from("notes")
@@ -47,7 +58,11 @@ export const noteRepository = {
     if (error !== null) throw new Error(error?.message);
     return data;
   },
-  async update(userId: string, id: number, noteUpdate: NoteUpdate): Promise<Note> {
+  async update(
+    userId: string,
+    id: number,
+    noteUpdate: NoteUpdate
+  ): Promise<Note> {
     const { data, error } = await supabase
       .from("notes")
       .update(noteUpdate)
@@ -175,7 +190,6 @@ console.log(newNote.invalid);  // ❌ コンパイルエラー！存在しない
 
 このように、型安全性を確保しながら開発時にエラーを早期発見できるようになります！
 */
-
 
 /*
 選択されている`find`メソッドについて詳しく解説しますね！
