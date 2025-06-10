@@ -4,12 +4,13 @@ import { useCurrentUserStore } from '@/modules/auth/current-user.state';
 import { useState } from 'react';
 import { noteRepository } from '@/modules/notes/note.repository';
 import { useNoteStore } from '@/modules/notes/note.state';
+import { useNavigate } from 'react-router-dom';
 
 export function Home() {
   const [title, setTitle] = useState("");
   const { currentUser } = useCurrentUserStore();
   const noteStore = useNoteStore();
-
+  const navigate = useNavigate();
 
 
   const handleCreateNote = async () => {
@@ -20,7 +21,7 @@ export function Home() {
     const newNote = await noteRepository.create(currentUser!.id, { title });
     noteStore.set([newNote]);
     setTitle("");
-    
+    navigate(`/notes/${newNote.id}`);
   };
 
   return (
