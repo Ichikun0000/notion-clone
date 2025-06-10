@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useCurrentUserStore } from "@/modules/auth/current-user.state";
 import { useNoteStore } from "@/modules/notes/note.state";
 import { NoteUpdate } from "@/modules/notes/note.entity";
+import Editor from "@/components/Editor";
 
 const NoteDetail = () => {
   const params = useParams();
@@ -23,6 +24,9 @@ const NoteDetail = () => {
   };
 
   const updateNote = async (updateData: NoteUpdate) => {
+    // console.log(updateData.content);
+    // console.log(JSON.parse(updateData.content ?? ""));
+    // return;
     const updatedNote = await noteRepository.update(
       currentUser!.id,
       id,
@@ -47,6 +51,12 @@ const NoteDetail = () => {
           onTitleChange={(title) => {
             updateNote({ title });
           }}
+        />
+        <Editor
+          onContentChange={(content) => {
+            updateNote({ content });
+          }}
+          initialContent={note.content ?? null}
         />
       </div>
     </div>
