@@ -19,9 +19,16 @@ function App() {
   }, []);
 
   const setSession = async () => {
-    const currentUser = await authRepository.getCurrentUser();
-    currentUserStore.set(currentUser);
-    setIsLoading(false);
+    try {
+      const currentUser = await authRepository.getCurrentUser();
+      if (currentUser) {
+        currentUserStore.set(currentUser);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.error('セッション取得エラー:', error);
+      setIsLoading(false);
+    }
   }
 
   if (isLoading) {
