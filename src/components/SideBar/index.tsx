@@ -7,22 +7,28 @@ import { useCurrentUserStore } from '@/modules/auth/current-user.state';
 import { noteRepository } from '@/modules/notes/note.repository';
 import { useNoteStore } from '@/modules/notes/note.state';
 import { useNavigate } from 'react-router-dom';
+import { authRepository } from '@/modules/auth/auth.repository';
 
 type Props = {
   onSearchButtonClicked: () => void;
 };
 
 const SideBar: FC<Props> = ({ onSearchButtonClicked }) => {
-  const { currentUser } = useCurrentUserStore();
+  const currentUserStore = useCurrentUserStore();
   const navigate = useNavigate();
   const noteStore = useNoteStore();
   const handleCreateNote = async () => {
-    const newNote = await noteRepository.create(currentUser!.id, {});
+    const newNote = await noteRepository.create(currentUserStore.currentUser!.id, {});
     noteStore.set([newNote]);
     navigate(`/notes/${newNote.id}`);
   };
 
-  console.log('render');
+  const handleSignout = async () => {
+    await authRepository.signout();
+    noteStore.clear();
+    currentUserStore.set(null);
+    navigate('/');
+  };
 
   return (
     <>
@@ -30,15 +36,8 @@ const SideBar: FC<Props> = ({ onSearchButtonClicked }) => {
         <div>
           <div>
             <UserItem
-              user={{
-                id: 'test',
-                aud: 'test',
-                email: 'test@gmail.com',
-                user_metadata: { name: 'testさん' },
-                app_metadata: {},
-                created_at: 'test',
-              }}
-              signout={() => {}}
+              user={currentUserStore.currentUser!}
+              signout={handleSignout}
             />
             <Item label="検索" icon={Search} onClick={onSearchButtonClicked} />
           </div>

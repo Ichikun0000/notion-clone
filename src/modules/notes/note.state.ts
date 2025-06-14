@@ -40,6 +40,10 @@ export const useNoteStore = () => {
 
   const getOne = (id: number) => notes.find((note) => note.id === id);
 
+  const clear = () => {
+    setNotes([]);
+  };
+
   /**
    * ノートとその子ノートを削除する
    * @param id 削除対象のノートID
@@ -154,5 +158,6 @@ const findChildrenIds = (parentId: number): number[] => {
     set,
     getOne,
     delete: deleteNote,
+    clear,
   };
 };

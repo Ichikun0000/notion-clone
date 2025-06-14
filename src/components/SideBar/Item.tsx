@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { LucideIcon } from 'lucide-react';
+import { forwardRef } from 'react';
 
 interface ItemProps {
   label: string;
@@ -10,16 +11,17 @@ interface ItemProps {
   trailingItem?: React.ReactElement;
 }
 
-export function Item({
+export const Item = forwardRef<HTMLDivElement, ItemProps>(({
   label,
   onClick,
   onIconClick,
   icon: Icon,
   isActive = false,
   trailingItem,
-}: ItemProps) {
+}, ref) => {
   return (
     <div
+      ref={ref}
       className={cn(
         'group min-h-[27px] text-sm py-1 pr-3 w-full flex items-center text-muted-foreground font-medium',
         isActive && 'bg-neutral-200'
@@ -36,4 +38,6 @@ export function Item({
       {trailingItem}
     </div>
   );
-}
+});
+
+Item.displayName = 'Item';
