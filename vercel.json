@@ -1,8 +1,13 @@
 {
+  "functions": {
+    "api/auth.js": {
+      "includeFiles": "api/**"
+    }
+  },
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/"
+      "destination": "/api/auth?path=$1"
     }
   ]
 }
