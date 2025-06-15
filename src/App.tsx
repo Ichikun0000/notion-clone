@@ -12,7 +12,6 @@ function App() {
   const currentUserStore = useCurrentUserStore();
   // セッションを取得
   useEffect(() => {
-    console.log('setSession');
     setSession();
   }, []);
 
