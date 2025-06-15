@@ -5,7 +5,7 @@
 ## 🚀 デモ
 
 実際のアプリケーションをVercelでホスティングしています。
-[デモを見る](https://notion-clone-mczq.vercel.app/)
+[デモを見る](https://notion-clone-gold-pi.vercel.app/)
 
 ## 📋 主な機能
 
