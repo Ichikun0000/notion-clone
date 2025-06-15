@@ -7,18 +7,34 @@ function Signup() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isSigningUp, setIsSigningUp] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const currentUserStore = useCurrentUserStore();
 
   const handleSignup = async () => {
+    if (isSigningUp) return;
+    
+    setIsSigningUp(true);
+    setError(null);
+    
     try {
       const user = await authRepository.signup(name, email, password);
-      currentUserStore.set(user);
+      currentUserStore.setUser(user);
     } catch (error) {
       console.error(error);
+      setError('登録に失敗しました。入力内容を確認してください。');
+    } finally {
+      setIsSigningUp(false);
     }
   };
 
-  if (currentUserStore.currentUser !== null) {
+  // 認証状態がローディング中の場合は何も表示しない（App.tsxでハンドル）
+  if (currentUserStore.isLoading) {
+    return null;
+  }
+
+  // 認証済みの場合はホームページにリダイレクト
+  if (currentUserStore.isAuthenticated) {
     return <Navigate to="/" replace />;
   }
 
@@ -31,6 +47,11 @@ function Signup() {
         <div className="mt-8 w-full max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="space-y-6">
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+                  {error}
+                </div>
+              )}
               <div>
                 <label
                   className="block text-sm font-medium text-gray-700"
@@ -94,12 +115,13 @@ function Signup() {
                     name === '' ||
                     email === '' ||
                     password === '' ||
-                    !email.includes('@')
+                    !email.includes('@') ||
+                    isSigningUp
                   }
                   onClick={handleSignup}
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  登録
+                  {isSigningUp ? '登録中...' : '登録'}
                 </button>
               </div>
             </div>

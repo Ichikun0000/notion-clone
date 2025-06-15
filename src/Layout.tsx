@@ -9,32 +9,36 @@ import { Note } from "./modules/notes/note.entity";
 import { subscribe, unsubscribe } from "./lib/supabase";
 
 const Layout = () => {
-  const { currentUser } = useCurrentUserStore();
+  const currentUserStore = useCurrentUserStore();
   const noteStore = useNoteStore();
   const [isLoading, setIsLoading] = useState(true);
   const [isShowModal, setIsShowModal] = useState(false);
   const [searchResult, setSearchResult] = useState<Note[]>([]);
   const navigate = useNavigate();
+  
   const fetchNotes = async () => {
     console.log("fetchNotes");
     setIsLoading(true);
-    const notes = await noteRepository.find(currentUser!.id); // 親のノートのみ取得し、グローバルステートに保存
+    const notes = await noteRepository.find(currentUserStore.currentUser!.id); // 親のノートのみ取得し、グローバルステートに保存
     if (notes == null) return;
     noteStore.set(notes);
     setIsLoading(false);
   };
 
   useEffect(() => {
-    fetchNotes();
-    const channel = subscribeNote();
-    return () => {
-      unsubscribe(channel!);
-    };
-  }, []);
+    // 認証状態が確定し、ユーザーが認証済みの場合のみノートを取得
+    if (currentUserStore.isAuthenticated && currentUserStore.currentUser) {
+      fetchNotes();
+      const channel = subscribeNote();
+      return () => {
+        unsubscribe(channel!);
+      };
+    }
+  }, [currentUserStore.isAuthenticated]);
 
   const subscribeNote = () => {
-    if(currentUser === null) return;
-    return subscribe(currentUser!.id, (payload) => {
+    if(currentUserStore.currentUser === null) return;
+    return subscribe(currentUserStore.currentUser!.id, (payload) => {
       if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
         noteStore.set([payload.new]);
       } else if (payload.eventType === "DELETE") {
@@ -45,7 +49,7 @@ const Layout = () => {
 
   const searchNotes = async (keyword: string) => {
     console.log("searchKeyword", keyword);
-    const notes = await noteRepository.findByKeyword(currentUser!.id, keyword);
+    const notes = await noteRepository.findByKeyword(currentUserStore.currentUser!.id, keyword);
     console.log("searchNotes", notes);
     if (notes == null) return;
     // noteStore.set(notes);
@@ -57,8 +61,14 @@ const Layout = () => {
     navigate(`/notes/${noteId}`);
   };
 
-  if (currentUser === null) {
-    return <Navigate to="/signin" />;
+  // 認証状態がローディング中の場合は何も表示しない（App.tsxでハンドル）
+  if (currentUserStore.isLoading) {
+    return null;
+  }
+
+  // 未認証の場合はサインインページにリダイレクト
+  if (currentUserStore.isUnauthenticated) {
+    return <Navigate to="/signin" replace />;
   }
 
   return (

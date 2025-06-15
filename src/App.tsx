@@ -4,14 +4,12 @@ import { Home } from "./pages/Home"
 import NoteDetail from "./pages/NoteDetail"
 import Signin from "./pages/Signin"
 import Signup from "./pages/Signup"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useCurrentUserStore } from "./modules/auth/current-user.state"
 import { authRepository } from "./modules/auth/auth.repository"
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
   const currentUserStore = useCurrentUserStore();
-
   // セッションを取得
   useEffect(() => {
     console.log('setSession');
@@ -20,19 +18,25 @@ function App() {
 
   const setSession = async () => {
     try {
+      currentUserStore.setLoading(); // ローディング状態を設定
       const currentUser = await authRepository.getCurrentUser();
-      if (currentUser) {
-        currentUserStore.set(currentUser);
-      }
-      setIsLoading(false);
+      currentUserStore.setUser(currentUser); // 認証状態を適切に設定
     } catch (error) {
       console.error('セッション取得エラー:', error);
-      setIsLoading(false);
+      currentUserStore.setUser(null); // エラー時は未認証状態に設定
     }
   }
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+  // 認証状態がローディング中の場合はローディング画面を表示
+  if (currentUserStore.isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">認証状態を確認中...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
