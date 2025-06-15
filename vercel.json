@@ -4,12 +4,5 @@
       "source": "/(.*)",
       "destination": "/"
     }
-  ],
-  "functions": {
-    "app/**": {
-      "headers": {
-        "WWW-Authenticate": "Basic"
-      }
-    }
-  }
+  ]
 }
