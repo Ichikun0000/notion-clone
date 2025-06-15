@@ -1,54 +1,127 @@
-# React + TypeScript + Vite
+# Notion Clone
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+転職活動用に開発したNotionクローンアプリケーションです。リッチテキストエディタを含む本格的なメモアプリを実装しています。
 
-Currently, two official plugins are available:
+## 🚀 デモ
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+実際のアプリケーションをVercelでホスティングしています。
+[デモを見る](https://notion-clone-mczq.vercel.app/)
 
-## Expanding the ESLint configuration
+## 📋 主な機能
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **ユーザー認証**: Supabase Authを使用したサインアップ・サインイン機能
+- **リッチテキストエディタ**: BlockNoteを使用した高機能なエディタ
+- **リアルタイム同期**: Supabaseのリアルタイム機能による変更の即座反映
+- **ノート管理**: 作成・編集・削除・検索機能
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 🛠 技術スタック
+
+### フロントエンド
+- **React 18** + **TypeScript**: モダンなReact開発
+- **Vite**: 高速な開発環境とビルドツール
+- **React Router**: SPA向けルーティング
+- **Jotai**: 軽量な状態管理ライブラリ
+- **Tailwind CSS**: スタイリング
+- **Radix UI**: アクセシブルなUIコンポーネント
+
+### バックエンド/データベース
+- **Supabase**: BaaS（Backend as a Service）
+  - PostgreSQL データベース
+  - リアルタイム機能
+  - 認証機能
+  - Row Level Security
+
+### エディタ
+- **BlockNote**: Notion風リッチテキストエディタ
+- **日本語対応**: 日本語ローカライゼーション実装
+
+### デプロイ・インフラ
+- **Vercel**: フロントエンドホスティング
+- **環境変数管理**: セキュアな認証情報管理
+
+## 🏗 アーキテクチャ
+
+```
+src/
+├── components/          # 再利用可能なUIコンポーネント
+│   ├── Editor.tsx      # BlockNoteエディタ
+│   ├── NoteList/       # ノート一覧表示
+│   └── ui/             # 基本UIコンポーネント
+├── modules/            # ドメイン別のビジネスロジック
+│   ├── auth/           # 認証関連
+│   └── notes/          # ノート管理
+├── pages/              # ページコンポーネント
+└── lib/                # 共通ユーティリティ
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🔧 セットアップ
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 前提条件
+- Node.js 18+
+- npm/yarn
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+### インストール
+```bash
+git clone [このリポジトリのURL]
+cd notion-clone
+npm install
 ```
+
+### 環境変数設定
+`.env.local`ファイルを作成し、以下を設定：
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_API_KEY=your_supabase_anon_key
+```
+
+### 開発サーバー起動
+```bash
+npm run dev
+```
+
+## 📝 開発のポイント
+
+### 1. 型安全性の重視
+- TypeScriptによる厳密な型定義
+- Supabaseの型生成機能を活用
+- プロップスと状態の型安全性確保
+
+### 2. 状態管理の最適化
+- JotaiによるAtomベースの状態管理
+- コンポーネント間の疎結合を実現
+- パフォーマンスを考慮した状態更新
+
+### 3. リアルタイム機能
+- Supabaseのリアルタイム機能を活用
+- 複数ユーザー間でのデータ同期
+- 効率的なデータベース購読管理
+
+### 4. ユーザビリティ
+- 直感的なUI/UX設計
+- レスポンシブデザイン
+- アクセシビリティへの配慮
+
+## 🎯 学習・実装のポイント
+
+このプロジェクトを通じて以下のスキルを習得・実践しました：
+
+- **モダンReact開発**: Hooks、Context、カスタムフック
+- **TypeScript**: 型定義、ジェネリクス、型推論
+- **BaaS活用**: Supabaseの各種機能の実装
+- **状態管理**: Jotaiによる効率的な状態管理
+- **リアルタイム通信**: WebSocketを使用したリアルタイム機能
+- **認証機能**: セキュアな認証フローの実装
+- **デプロイ・運用**: Vercelを使用したモダンなデプロイ
+
+## 🔍 今後の改善予定
+
+- [ ] ダークモード対応
+- [ ] オフライン機能
+- [ ] ノートの共有機能
+- [ ] より高度な検索機能
+- [ ] ファイルアップロード機能
+
+---
+
+**開発期間**: [2025/06/01 ~ 2025/06/15]
+**技術選定理由**: モダンな技術スタックで実用的なアプリケーションを構築し、実際のプロダクト開発で求められるスキルを実践したかったため。
