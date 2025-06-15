@@ -4,6 +4,7 @@ import { Home } from "./pages/Home"
 import NoteDetail from "./pages/NoteDetail"
 import Signin from "./pages/Signin"
 import Signup from "./pages/Signup"
+import NotFound from "./pages/NotFound"
 import { useEffect } from "react"
 import { useCurrentUserStore } from "./modules/auth/current-user.state"
 import { authRepository } from "./modules/auth/auth.repository"
@@ -49,6 +50,7 @@ function App() {
           </Route>
           <Route path="/signin" element={<Signin />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
     </BrowserRouter>
